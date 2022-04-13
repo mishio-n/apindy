@@ -10,7 +10,17 @@ import {
 import { GenderCategory } from '@prisma/client';
 import { HorseService } from './horse.service';
 
-@Controller('horse')
+const isGenderCategory = (arg: string): arg is GenderCategory => {
+  switch (arg.toUpperCase()) {
+    case GenderCategory.MALE:
+    case GenderCategory.FEMALE:
+      return true;
+    default:
+      return false;
+  }
+};
+
+@Controller('horses')
 export class HorseController {
   constructor(private service: HorseService) {}
 
@@ -22,10 +32,14 @@ export class HorseController {
 
   @Get()
   async getSeasonHorses(
-    @Query('birthYear') birthYear: string,
-    @Query('genderCategory') genderCategory: GenderCategory,
+    @Query('birthyear') birthYear: string,
+    @Query('gendercategory') genderCategory: string,
   ) {
     if (isNaN(+birthYear)) {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!isGenderCategory(genderCategory)) {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     }
 
