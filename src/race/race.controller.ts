@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { RaceService } from './race.service';
 
@@ -29,12 +31,29 @@ export class RaceController {
     return template;
   }
 
+  @Delete('templates/:id')
+  async deleteRaceTemplate(@Param('id') id: string) {
+    const template = await this.service.getRaceTemplate(id);
+    if (template === undefined) {
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    }
+
+    return template;
+  }
+
   @Post('templates')
   async createRaceTemplate(@Body() body: { title: string; url: string }) {
     const { title, url } = body;
     const template = await this.service.createRaceTemplate(url, title);
 
     return template;
+  }
+
+  @Post('tierlists')
+  async createRaceTierList(@Body() body: any) {
+    const tierList = await this.service.createRaceTierList(body);
+
+    return tierList;
   }
 
   @Get('tierlists/:id')
@@ -47,8 +66,8 @@ export class RaceController {
     return tierList;
   }
 
-  @Post('tierlists')
-  async createRaceTierList(@Body() body: any) {
+  @Put('tierlists/:id')
+  async updateRaceTierList(@Param('id') id: string, @Body() body: any) {
     const tierList = await this.service.createRaceTierList(body);
 
     return tierList;

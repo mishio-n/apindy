@@ -35,17 +35,18 @@ export class HorseController {
     @Query('birthyear') birthYear: string,
     @Query('gendercategory') genderCategory: string,
   ) {
+    const upperCasedGenderCategory = genderCategory.toUpperCase();
     if (isNaN(+birthYear)) {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     }
 
-    if (!isGenderCategory(genderCategory)) {
+    if (!isGenderCategory(upperCasedGenderCategory)) {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     }
 
     const result = await this.service.getHorseDataBySeason(
       +birthYear,
-      genderCategory,
+      upperCasedGenderCategory,
     );
     return result;
   }
